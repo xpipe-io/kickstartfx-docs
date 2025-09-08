@@ -1,0 +1,18 @@
+---
+title: Versioning
+description: Handling application versions properly
+---
+
+## About
+
+Versioning software has always been an opinionated topic. However, in practice, when dealing with software releases for multiple operating systems, different types of installers, and more, there are standard ways of achieving a smooth handling of versioning.
+
+Different installers like .pkg on macOS or .msi on Windows requires fixed version formats. Therefore, it is best to use a canonical versioning scheme with `major.minor[.patch]`. This scheme can be used in all cases and is therefore the best choice. Other custom versioning schemes will run into the issue that one component will not properly support the version scheme. This scheme is implemented in the **AppVersion** class and allows for comparisons between versions.
+
+## Version requirements
+
+Windows executables and .msis require a canonical version of the form `x.x.x.x` but don't effectively use the last component. This is why the version should only be composed of three components. The last component is padded with a 0 for Windows. On macOS, .pkgs require a canonical version consisting out of 3 components. However, the major version must be at least 1, meaning that you can't have `0.x.y` releases.
+
+## Build IDs
+
+In addition, each build is assigned a new build UUID to give further options for distinguishing releases. You can have multiple releases of the same version but different build UUIDs. For example, when dealing with Sentry or ProGuard mappings, having a unique UUID associated with the build makes your life easier. This property is tracked in **AppProperties** with *buildUuid* and the *newBuildSession* property to check if we are running a different build than last time. Keeping track of versions or build IDs is also important to be aware of when an update has been performed. Sometimes, it makes sense to clear data such as caches when the build ID changed.

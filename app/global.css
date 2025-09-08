@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    @apply bg-white dark:bg-black;
+    @apply bg-[url('/images/background-right.png')] bg-[position:right] bg-no-repeat bg-repeat-y md:bg-[url('/images/background-left.png'),_url('/images/background-right.png')] md:bg-[position:left,_right];
+}
+
+#nd-docs-layout {
+    @apply bg-[#3331] dark:bg-[#3462];
+}
+
+#nd-sidebar {
+    @apply bg-[#fffb] dark:bg-[#101215ee];
+}
+
+#nd-sidebar p {
+    @apply mb-1 pl-1;
+}
+
+#nd-sidebar a {
+    @apply py-1 pl-1;
+}
+
+#nd-sidebar p.mt-8 {
+    @apply mt-5 !important;
+}
+
+#nd-sidebar button.flex-row {
+    @apply py-1 pl-1;
+}
+
+#nd-page {
+}
+
+h1, h2, h3, h4, h5, h6 {
+
+    @apply text-teal-700 dark:text-teal-400 !important;
+}
+
+button[type=submit] {
+    @apply dark:bg-teal-800 bg-teal-300 border border-teal-500;
+}
+
+button[type=button][role=combobox] {
+    @apply dark:bg-teal-900 bg-teal-200 border border-teal-700 mt-4;
+}

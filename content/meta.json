@@ -1,0 +1,16 @@
+{
+  "title": "KickstartFX documentation",
+  "description": "Your entire server infrastructure at your fingertips",
+  "root": true,
+  "pages": [
+    "---Getting started---",
+    "index",
+    "guide/installation",
+    "guide/managed-installation",
+    "guide/webtop",
+    "---Guide---",
+    "aot",
+    "operation-mode",
+    "/"
+  ]
+}

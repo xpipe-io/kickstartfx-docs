@@ -1,0 +1,23 @@
+---
+title: Introduction
+description: Getting to know KickstartFX
+---
+
+## About
+
+Operation modes are a core concept behind kickstarfx. The idea is to provide a solid state management under all circumstances where your application is fully aware of which state it is currently in and initializes/uninitializes.
+
+The concept of operation modes is particularly useful if you are planning to do more than showing a simple window. This can for example be allowing your app to run in the background or as a tray icon, in addition to a normal GUI window.
+
+Right now, there are 3 operation modes included:
+- GUI mode is basically just a normal mode where a window is shown
+- Tray mode is a mode where no window is shown but an AWT tray icon is shown instead. This is configured to only work on Windows as the tray icon support and other operating systems isn't that good. You can however enable it for other operating systems as well
+- Background mode is the app basically running in the background without any window showing
+
+Operation modes inherit from each other. For example, the GUI mode requires any initialization done by the background mode as well to run. Essentially, the background mode should load only the essential things for you're apt to run at all. The GUI mode should then load anything related to the JavaFX platform. When done right, your background mode does not perform any call to any JavaFX methods. This layered approach makes your application more structured as the loading and disposing is not just done all at once, but instead distributed according to when it is actually required. You can freely add or remove operation modes, depending on your individual use case.
+
+Having a solid state management in your app is important. What happens if:
+- You want to use a system tray icon if possible but fall back to just running in the background if not
+- Your app starts up in the background, but something is requesting to show an important dialog to the user? The operation mode handling will make sure that the app switches to window mode if background/tray is not enough
+- An error occurs while switching operation modes, e.g. when hiding the window and showing a tray icon
+- Window mode is not supported because JavaFX is missing libraries to function? You can still your app using the background operation mode and perform error handling

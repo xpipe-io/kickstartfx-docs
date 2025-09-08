@@ -1,0 +1,49 @@
+---
+title: Startup checks
+description: Improving startup performance
+---
+
+## About
+
+One area where desktop application development is far worse than backend development is that you will have to ensure that your application runs in all kinds of user environments and setups. You would be surprised how messed up some of them are. Missing environment variables, wrong directory permissions, outdated systems, corrupt registries, wrong architecture, and more.
+
+KickstartFX comes with a variety of startup checks that will check for the most common issues that you frequently face on some user's systems. Ideally, any application should still work on misconfigured systems or at the very least, provide an error message on what the issue is and how to fix it.
+
+## Directory permissions
+
+Most applications store some kind of configuration data, usually in a subdirectory located somewhere in the user home directory. While this is a straightforward process, a lot of unexpected things can go wrong here.
+
+Apart from the conventional issues such as a faulty or full hard drive, one common issue is an overzealous AV (AntiVirus) program blocking your application from accessing the file system on Windows. While this problem is already bad enough, it usually gets amplified by these AVs not telling the user or application when the block occurs. Instead, users will just end up with generic access denied exceptions in your application. On macOS, all applications are blocked by default when accessing common directories like the documents directory, but at least on there, users will get a notification for that.
+
+Another common problem is dealing with cloud-synced directories which are getting more and more prevalent these days. For example, it can happen that a user will get logged out from their account after some time. If that occurs, all file system operations will fail for synced directories. OneDrive behaves pretty badly here as the user is not notified that their cloud storage is currently not working. Other cloud file providers can also run into a myriad of issues, but they usually handle it better than OneDrive.
+Implementing a check
+
+From experience, these issues are pretty common and affect around 1 out of 10 users at some point. The class **AppDirectoryPermissionsCheck** implements a reliable check to detect these issues. This check has drastically reduced reported issues of this kind for us as users now understand why the access is failing. Of course, you can also adapt it to fit your needs and targeted directories. You can make use of this approach in basically all desktop applications, it is not specific to Java. It is very simple but very effective.
+
+## Invalid PATHs
+
+On Windows, the `PATH` environment variable is vital to making most applications work. Chances are, with an invalid or empty PATH, your application might also run into some issues. When you can't run a simple `cmd.exe` command, many applications break down.
+
+While this sounds like a user error, in practice it's mostly installers nuking the PATH environment variable by accident. That there's not a lot the user can do other than painfully fixing it once they are aware.
+
+The class **AppPathCorruptCheck** implements this check.
+
+## JVM options override
+
+Did you know that the environment variable `_JAVA_OPTIONS`, which can contain custom JVM arguments, also applies to standalone jpackage executables? And did you also know that it overrides your prespecified options for it as well? Now that you know this, you will have to adjust for that.
+
+In practice, it might happen that a user has configured this variable for something else, and it inadvertently also applies to your application. If they used this variable to configure another application to use -Xmx256m, but your application requires -Xmx4G, chances are that you will run out of memory.
+
+To warn about this (we can't fix it, the user has to remove the environment variable), the class **AppJavaOptionsCheck** checks for this.
+
+## Wrong architecture
+
+With the advent of ARM64, there is a relatively new possibility of users running the wrong executable on their new ARM processor. This can happen because both Windows and macOS provide a compatibility layer to run x86_64 applications on ARM. Users who don't know anything about architectures are prone to confusing this and using the wrong version. The problem here is that the performance is significantly worse when used in this compatibility layer.
+
+KickstartFX will check for this in **AppWindowsArmCheck** and **AppRosettaCheck**.
+
+## GPU check
+
+Not every system might have a GPU, or a supported GPU. In this case, you might have to adjust your application to ensure that it is still usable on these systems. The **AppGpuCheck** does this by first checking whether advanced hardware acceleration can be used, and if not, enable performance mode to reduce rendering quality.
+
+

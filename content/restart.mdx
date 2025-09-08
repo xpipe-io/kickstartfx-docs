@@ -1,0 +1,30 @@
+---
+title: App shutdown
+description: Improving startup performance
+---
+
+## About
+
+Shutting down an application isn't that straightforward if your application implements more advanced functionality. There's always the issue of saving all user data in an orderly manner prior to exit. KickstartFX handles all kinds of shutdowns properly to ensure that you can always shut down the app in orderly fashion.
+
+## Shutdown hooks
+
+By default, JavaFX comes with its own shutdown hook which will close all windows and dispose of the platform when it is called. This is, however, not optimal as it does not allow us to customize the shutdown behavior. With this shutdown hook in effect, you can't perform any calls on the platform thread anymore as soon as an exit signal is received.
+
+For a more controlled flow, kickstartfx disables this shutdown hook via reflection in the **PlatformState** class. This allows the application to implement a fully custom shutdown routine without having the platform suddenly exit on you without your control.
+
+## Windows shutdown
+
+On Windows, a limitation of JavaFX is that there is no possibility to block the shutdown, for example, if the user has unsaved changes. KickstartFX comes with the integrated ability to do this automatically. As long as the main window is open, any Windows shutdown will be blocked, just as with other native applications.
+
+This means that you will have to take care of properly closing the Window when a shutdown request is received. By default, it will already handle any shutdown requests and orderly shut down the application. Therefore, if you want to block the shutdown, you can just show a blocking dialog using the **AppDialog** class in the shutdown code.
+
+This custom Windows shutdown hook in the class **AppWindowsShutdown** also takes care of special events, for example, when an .msi application installer requests the closure of the running application.
+
+## External shutdown
+
+The operation modes and platform handling also work together to handle external shutdown requests, e.g. via a SIGTERM command when you CTRL+C in a terminal window while the application is running or when the OS signals it wants to shut down. The shutdown behavior for the application is then altered to perform a faster but still regular shutdown of the program state so that there is, for example, no lost save of user data possible. The shutdown behavior is also adapted to handle other cases, e.g. a shutdown request while the application is still starting.
+
+## Customized exit behavior
+
+There is a built-in setting to control the exit behavior of the GUI application when the window is closed. This allows you to provide users the option to let your application run in the background when closed.

@@ -1,0 +1,33 @@
+---
+title: Ahead of time optimizations
+description: Improving startup performance
+---
+
+## About
+
+kickstartfx comes with integrated support for the new ahead-of-time optimizations of [project Leyden](https://openjdk.org/projects/leyden/).
+Essentially, the application will be run in a training run at build time and a cache will be created for which classes should be loaded and kept. This data is then later loaded by the JDK at runtime to improve startup performance.
+
+The AOT cache will also increase the size of your application distribution. If you are looking for minimal size, then it is best to disable the AOT train feature as a whole.
+
+## Configuring AOT training
+
+You can find the gradle implementation that will perform these optimizations at build time in the file **train.gradle**.
+
+By default, these optimizations are only run in the CI pipeline. To override the behavior of when it is active, e.g. to also use it when creating builds locally, you can edit the property *trainAot* in the root **build.gradle** file to fully customize it. You can also just completely disable it there if you want.
+
+## Defining the train method
+
+KickstartFX will call the train method in the class *AppAotTrain* and exit if it is run in AOT training mode. This means that you should implement all code you want to train on in this method. The more coverage you achieve, the more class data can be prepared.
+
+Depending on the CI runner, support for various features might very. For example, on the default Linux GitHub actions runners, there is no GUI support unless you manually install all the required packages. On Windows and macOS runners, there is GUI support by default. This means that you should adapt your training run by operating system.
+
+Also make sure that the training run does not freeze or get stuck, otherwise your runner will be idle for hours.
+
+## Debugging AOT
+
+The AOT cache is only loaded in production mode, meaning only if you run the executable. If you run a debug script to start the application, the AOT cache is not used.
+
+To see what happens internally in the JDK, you can add the option `-Xlog:aot` to your application JVM arguments and run the production app with a generated AOT cache in a terminal.
+
+On Windows, the .exe does not print output to the console by default. To still get the AOT output, you will have to run something like `kickstartfx.exe > log.txt`, this will show output that is otherwise hidden.

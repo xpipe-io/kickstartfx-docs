@@ -1,0 +1,33 @@
+---
+title: Fonts
+description: Navigating the tricky world of fonts
+---
+
+## About
+
+Font handling in JavaFX applications has always been a weak point. The quality of the font rendering is weak when compared to other solutions, and it also has various issues. However, when done right, these issues are barely noticeable for users.
+
+## Font loading
+
+The fonts are loaded in the file **AppFont**. You can drop any font files you want to use into the **fonts** resources directory, and they will be loaded. In addition to these fonts, kickstartfx will also immediately load Ikonli fonts to avoid loading them lazily later and potentially causing lag.
+
+## Fonts on Linux
+
+In contrast to Windows and macOS, font loading on Linux is a lot more dynamic. Especially on non-graphical systems or embedded systems, there might be no fonts at all installed by default.
+
+To make sure that your application runs even on those systems, which is most frequently a WSL system, kickstartfx automatically supplies overrides for JavaFX to load the bundled Inter font. You can find these definitions at **allfonts.properties** and **logicalfonts.properties**. These are used if kickstartfx detects that no fonts installed on the system when the **PlatformState** class initializes the JavaFX platform.
+
+For more information about this, see https://foojay.io/today/javafx-on-wsl/.
+
+## Making fonts look good
+
+The implementation of font loading and rendering is different for each operating system in JavaFX. This means that the quality and available options differ based on the operating system.
+
+On windows, kickstartfx applies `-fx-font-smoothing-type: gray;` for smoother font rendering. On Linux, it uses `-fx-font-smoothing-type: lcd;`. On macOS, these options are not available, so there aren't any used. These options are the ones that turned out to be the best in practice.
+
+To actually make fonts look decent, the main trick is to use well-suited font-sizes and font colors. These can make a night and day difference for the same underlying font. The ideal font sizes depend on the selected theme, so each theme in **AppTheme** supplies a different font size and color configuration. For consistent sizing, the class **AppFontSizes** is used to provide different font sizes in 0.5pt increments based off a varying base font size.
+
+On macOS, the default system font looks horrible, especially in smaller sizes. As a workaround, kickstartfx defaults to the Inter font on macOS, in contrast to the other operating systems where it uses the native font. The Inter font is very similar to the native macOS font, but looks much better in smaller sizes. In practice, you will almost not see any difference in terms of font styling, but still get better readability.
+
+Font weights don't work fully, so effectively you only have the choice between default font weight and bold font weight. But if you are using it effectively, it can still be enough to obtain well-looking highlights.
+
