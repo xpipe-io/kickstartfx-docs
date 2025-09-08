@@ -1,16 +1,10 @@
 {
   "title": "KickstartFX documentation",
-  "description": "Your entire server infrastructure at your fingertips",
+  "description": "Kickstart your JavaFX application",
   "root": true,
   "pages": [
-    "---Getting started---",
-    "index",
-    "guide/installation",
-    "guide/managed-installation",
-    "guide/webtop",
     "---Guide---",
     "aot",
-    "operation-mode",
-    "/"
+    "operation-mode"
   ]
 }
