@@ -1,0 +1,22 @@
+---
+title: Ahead of time optimizations
+description: Improving startup performance
+---
+
+## About
+
+Theming is an important aspect when it comes to the look and feel of your application. Since KickstartFX it depends on AtlantaFX, it comes with all default themes that the user can switch to. In addition, there's also the possibility to create derived custom themes.
+
+## Native themes
+
+One of the ultimate goals of a JavaFX application is to come as close as possible to a native app, meaning that a normal user might not even be able to differentiate between them. To achieve this, KickstartFX will try to mirror and watch the system theme to apply it to the styling. This includes applying the best-fitting theme for each operating system, applying the dark mode and accent colors of the system appearance, and more.
+
+The theme watching is done through the JavaFX platform preferences API where the system theme and accent colors are automatically applied to your application. Any changes made in your system appearance settings will apply to your application as well. You can find the logic for this in the class **AppTheme**.
+
+Furthermore, on Windows, it will configure the window decorations to use the native Windows 11 colored frame if possible, coming very close to a native application look. You can find the implementation for this in the class **AppModifiedStage**. Depending on whether your window decorations are configured to use the native style, the **frame.css** stylesheet will apply different styling to your application to optimally embed it into the frame.
+
+## Custom themes
+
+To implement custom themes, there are effectively two options. Either fork AtlantaFX or just take an existing AtlantaFX theme and alter a bit in your application. The second option can be done within KickstartFX and is also implemented in an exemplary fashion with the Mocha theme that you can find in **AppTheme** and **mocha.css**.
+
+This custom theming essentially takes all style information from a base AtlantaFX theme and overrides the color definitions of it.
