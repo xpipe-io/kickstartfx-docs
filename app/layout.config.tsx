@@ -20,7 +20,7 @@ export const baseOptions: BaseLayoutProps = {
                   aria-label="KickstartFX"
               />}
               <span className="font-medium text-[15px]">
-          KickstartFX Documentation
+          KickstartFX Docs
         </span>
           </>
       ),

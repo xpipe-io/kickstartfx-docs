@@ -1,0 +1,18 @@
+---
+title: Windows codesigning
+description: Eliminating untrusted publisher warnings on Windows
+---
+
+## About
+
+Windows SmartScreen by default always shows a warning when an executable or installer from an unknown publisher is run from the explorer. This behavior can be turned off in the security settings, but most users will have this setting turned on. Therefore, it is important to avoid these warnings to provide a good user experience. Otherwise, some users might become skeptical and not run your application at all when the warning is shown.
+
+In essence, to get rid of these warnings, you will need some form of EV (extended validation) codesigning certificate from certificate authority. Any other form of certificates that are being sold (i.e. ones that are not called EV), will not get rid of these warnings.
+
+To allow the build pipeline to sign your application, you will need an HSM (hardware security module) EV certificate. These can be used with something like the Azure KeyVault to remotely sign your application. If you don't use an HSM certificate, you can't sign remotely, which is very tedious. So make sure that you buy an HSM EV certificate, but note that not all sellers offer this. You will have to find a certificate authority which supports this.
+
+There's also a thing called Azure Trusted Signing what you don't need to do all this, but this one is very restrictive and is not fully available yet. It is recommended to stick with the EV certificates.
+
+## Setup
+
+KickstartFX follows the guide from https://melatonin.dev/blog/how-to-code-sign-windows-installers-with-an-ev-cert-on-github-actions/. All environment variable names are the same, meaning that if you follow the guide, you should be able to sign your application with kickstartfx as well.

@@ -1,0 +1,28 @@
+---
+title: Setup
+description: Preparing your environment to build KickstartFX
+---
+
+## JDK
+
+To get started, you will need a JDK with version 25+. The JDK bin path has to be added to the PATH, so you will be able to run `java -version` in your terminal. For Linux and macOS, it is recommended to use [SDKMAN](https://sdkman.io/) to easily install any JDK.
+
+The distribution of the JDK does not really matter, KickstartFX can adapt based on the individual JDK. For example, if you are using the Liberica JDK with bundled JavaFX, the build will use the included JavaFX dependencies. If you are using another JDK without JavaFX, then the build will use separate JavaFX dependencies.
+
+The only thing to take care of is to not use a JDK which uses [JEP493](https://openjdk.org/jeps/493) where the JDK it does not contain any jmods. The jlink/jpackage plugin does not support these JDKs yet, hopefully in the future it will.
+
+## Windows
+
+On Windows, to build the msi installers, you need to have [Visual Studio 2022](https://visualstudio.microsoft.com/) installed. It doesn't matter which edition, KickstartFX will automatically choose any available version.
+
+You don't need to install WiX as this can be done automatically nowadays with the latest Visual Studio WiX projects.
+
+## Linux
+
+TBD
+
+## macOS
+
+On macOS, you need to have Xcode installed, including the command-line tools for Xcode.
+
+In addition to that, to create the dmg file, the [create-dmg](https://github.com/create-dmg/create-dmg) homebrew package needs to be present.

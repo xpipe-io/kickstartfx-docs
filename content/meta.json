@@ -3,8 +3,21 @@
   "description": "Kickstart your JavaFX application",
   "root": true,
   "pages": [
-    "---Guide---",
+    "---Pages---",
+    "index",
+    "setup",
     "aot",
-    "operation-mode"
+    "operation-mode",
+    "checks",
+    "arguments",
+    "build-pipeline",
+    "dependencies",
+    "fonts",
+    "notarization",
+    "restart",
+    "shutdown",
+    "themes",
+    "version",
+    "windows-signing"
   ]
 }

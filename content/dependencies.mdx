@@ -1,0 +1,26 @@
+---
+title: Dependencies
+description: Parsing and handling arguments passed via the command-line
+---
+
+## About
+
+When starting to customize your application, it's all about adding custom dependencies that your code needs.
+
+Properly handling command-line arguments passed by the user isn't that straightforward as it looks like. There are a variety of hurdles that can catch you out. The argument handling implementation of kickstartfx it takes care of them automatically.
+
+## Parsing arguments
+
+The arguments are passed in the **AppArguments** class.
+
+KickstartFX will automatically detect and extract any passed arguments that look like properties. This is done because in practice, most users don't understand the difference between a normal argument and an JVM argument. Also, with jpackage, it is not possible to easily pass JVM arguments, e.g. to set a property with `-Dkey=value`.
+
+After that, the arguments are matched against a picocli command definition. This allows you to use the full feature set of picocli while also keeping control of how to preprocess arguments.
+
+## Handling arguments
+
+If your application supports opening generic arguments like file paths or URLs, these have to be handled differently. After all options and parameters are removed from the arguments in the **AppArguments** class, any leftovers are passed into the **AppOpenArguments** class. This class will accumulate all generic arguments.
+
+On macOS, applications called via a custom URL scheme require special handling to receive the URL argument. This is implemented in the file **AppDesktopIntegration**. This is partially why these open arguments have to be buffered like this.
+
+The open arguments are handled when the application is fully started up. How you will handle them is up to you in your application.
