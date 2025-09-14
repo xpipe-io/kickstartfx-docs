@@ -9,7 +9,6 @@ import { notFound } from 'next/navigation';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import { Callout } from 'fumadocs-ui/components/callout';
 import { InlineTOC } from 'fumadocs-ui/components/inline-toc';
-import { openapi } from '@/lib/source';
 
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
@@ -34,7 +33,7 @@ export default async function Page(props: {
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
-        <MDX components={{ ...defaultMdxComponents, Callout, InlineTOC, APIPage: openapi.APIPage }} />
+        <MDX components={{ ...defaultMdxComponents, Callout, InlineTOC }} />
       </DocsBody>
     </DocsPage>
   );
