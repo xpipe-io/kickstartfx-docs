@@ -6,18 +6,18 @@
     "---Pages---",
     "index",
     "setup",
-    "aot",
-    "operation-mode",
-    "checks",
+    "build",
     "arguments",
-    "build-pipeline",
-    "dependencies",
-    "fonts",
-    "notarization",
-    "restart",
-    "shutdown",
+    "checks",
     "themes",
     "version",
-    "windows-signing"
+    "notarization",
+    "windows-signing",
+    "operation-mode",
+    "fonts",
+    "aot",
+    "shutdown",
+    "restart",
+    "dependencies"
   ]
 }

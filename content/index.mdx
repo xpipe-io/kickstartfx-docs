@@ -16,6 +16,7 @@ It features the following noteworthy features that you won't get with any other 
 - A ready-to-deploy GitHub actions pipeline to automatically build end release your application
 - Close-to-native theming capabilities with AtlantaFX themes as the basis combined with many manual adjustments
 - Advanced error handling and issue tracking with support for Sentry
+- Markdown rendering capabilities out-of-the-box with flexmark
 - Integrated ability to automatically codesign the application on Windows and macOS
 - Solid state management for caches, persistent data, and more
 - Many customization options available to users in a comprehensible settings menu
@@ -51,6 +52,11 @@ To accomplish this, KickstartFX uses a robust stylesheet system based on top of 
 
 In contrast to many other existing JavaFX template projects, KickstartFX does not rely on any opinionated or niche all-in-one solution to somehow generate packages and installers for all operating systems. Instead, it is carefully crafted to create the packages using native tools on each operating system, orchestrated by gradle build scripts. It comes with the ability to generate installers for all operating systems using native tools to create .msi, .deb, .rpm, and .pkg installers. Furthermore, it also generates .dmg, .zip, and .tar.gz portables. The entire build workflow can be fully customized, using the existing scripts as a basis.
 
+## GitHub actions workflow included
+
+The project comes with GitHub actions workflows to automatically build and sign your application on all available platforms and create a new GitHub release with them. They also contain code you can enable to build on custom platforms which are not supported by the normal hosted runners yet, e.g. Windows ARM or Linux ARM platforms.
+The workflows are state-of-the-art and can easily be expanded to customize your distribution workflow.
+
 ## Ready to be signed
 
 The goal of KickstartFX is that you can build applications without much hassle that work in production and provide a smooth user experience. A part of this experience is signing the code on various operating systems. Nowadays, if you distribute unsigned code, your users will either receive scary warnings or errors when running your application. KickstartFX comes with full integrated capabilities to codesign your application and packages on Windows and macOS. The only thing you need is to set up your signing infrastructure based on the instructions you can find these docs and configure certain environment variables for the build. Once that is done, the build will automatically produce signed artifact completely automatically.
@@ -62,6 +68,15 @@ The current state application development with Java and JavaFX is quite sad. You
 There is only one intended way to properly create native application images, and that is true using jlink/jpackage on a fully-modularized project. Anything else, especially not using modularity and instead using fat jars / shaded jars, is a bad solution and will cause you problems at some point. Using any kind of external tools is also not the right way, you will just have to deal with other kinds of problems and limitations instead.
 
 KickstartFX is fully modular, and can therefore easily generate working runtime images. It comes with the tools to convert any non-modular dependencies into proper modules using the [extra-java-module-info](https://github.com/gradlex-org/extra-java-module-info) gradle plugin, without much hassle. It also comes with proper jmod support to avoid the need for dynamic library extraction in the temporary directory. All included dynamic libraries, the ones of JavaFX and JNA by default, are included in the generated runtime image via jmods. This improves startup speed and error-resistance, just by using modules properly.
+
+## Runs everywhere
+
+The application runs on:
+- Windows 7+
+- macOS 10.11+
+- Linux
+
+Special care is taken for many more exotic Linux variants so that the application will still run. The Linux installers declare all necessary dependency packages for JavaFX, allowing you to install it even in systems like WSL and have your application run successfully.
 
 ## Status
 
