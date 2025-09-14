@@ -11,6 +11,8 @@ The build workflow is quite complex when you account for all necessary steps it 
 
 The main configuration of the build is done in the root **build.gradle**. There you can change all kinds of variables that are used throughout the build. This includes stuff like the name of your application and the generated artifacts, JVM arguments, JavaFX versions, and more.
 
+Note that if you use IntelliJ, preconfigured run configurations of the explained tasks are available in the **.run** directory in the project root.
+
 ## Gradle tasks
 
 The basic development build, which you most of the time run locally, will get you a basic running application. You are, however, missing stuff like codesigning, AOT training caches, and proper versioning. You can run the application in local development mode with `gradlew app:run`.
@@ -23,5 +25,7 @@ When configured and enabled, the production build workflow can include all steps
 
 The repository includes a GitHub actions workflow that will run the production build automatically without any user input. This workflow is run on all available operating systems and architectures you choose, and the generated artifacts are grouped together in a GitHub release.
 
-Note that if you use IntelliJ, preconfigured run configurations of these explained tasks are available in the **.run** directory in the project root.
+## Formatting
+
+To maintain a consistent code style, also across different IDEs, the project uses the spotless gradle plugin. You can run this task to automatically format your entire codebase into a standard format. You can adjust the code style settings for spotless in the root **build.gradle** file.
 

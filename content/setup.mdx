@@ -11,18 +11,39 @@ The distribution of the JDK does not really matter, KickstartFX can adapt based 
 
 The only thing to take care of is to not use a JDK which uses [JEP493](https://openjdk.org/jeps/493) where the JDK does not contain any jmods. The jlink/jpackage plugin does not support these JDKs yet, hopefully in the future it will.
 
-## Windows
+## Tools
+
+Depending on what system you are developing on, you will need some additional tools to be installed to generate production artifacts.
+
+### Windows
 
 On Windows, to build the msi installers, you need to have [Visual Studio 2022](https://visualstudio.microsoft.com/) installed. It doesn't matter which edition, KickstartFX will automatically choose any available version.
 
 You don't need to install WiX as this can be done automatically nowadays with the latest Visual Studio WiX projects.
 
-## Linux
+### Linux
 
 TBD
 
-## macOS
+### macOS
 
 On macOS, you need to have Xcode installed, including the command-line tools for Xcode.
 
 In addition to that, to create the dmg file, the [create-dmg](https://github.com/create-dmg/create-dmg) homebrew package needs to be present.
+
+## IDE
+
+All XPipe components target [Java 25](https://openjdk.java.net/projects/jdk/25/) and make full use of the Java Module System (JPMS).
+All components are modularized, including all their dependencies.
+As this is a pretty complicated Java project that fully utilizes modularity and the latest versions,
+many IDEs still have problems building this project properly.
+
+For example, you can't build this project in eclipse or vscode as it will complain about missing modules or other issues.
+The tested and recommended IDE is IntelliJ.
+When setting up the project in IntelliJ, make sure that the correct JDK (Java 25)
+is selected both for the project and for gradle itself.
+
+## Basic customization
+
+Once the project is up and running in your IDE, the next step is to configure the base template for your own purposes. This includes stuff like renaming packages and other application names to your own names. It also includes a variety of different steps
+
