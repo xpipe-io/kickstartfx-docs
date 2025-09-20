@@ -7,12 +7,20 @@ description: Handling application versions properly
 
 Versioning software has always been an opinionated topic. However, in practice, when dealing with software releases for multiple operating systems, different types of installers, and more, there are standard ways of achieving a smooth handling of versioning.
 
-Different installers like .pkg on macOS or .msi on Windows requires fixed version formats. Therefore, it is best to use a canonical versioning scheme with `major.minor[.patch]`. This scheme can be used in all cases and is therefore the best choice. Other custom versioning schemes will run into the issue that one component will not properly support the version scheme. This scheme is implemented in the **AppVersion** class and allows for comparisons between versions.
+Different installers like .pkg on macOS or .msi on Windows requires fixed version formats. Therefore, it is best to use a canonical versioning scheme with `major.minor[.patch]`. This scheme can be used in all cases and is therefore the best choice. Other custom versioning schemes will run into the issue that one component will not properly support the version scheme.
 
 ## Version requirements
 
 Windows executables and .msis require a canonical version of the form `x.x.x.x` but don't effectively use the last component. This is why the version should only be composed of three components. The last component is padded with a 0 for Windows. On macOS, .pkgs require a canonical version consisting out of 3 components. However, the major version must be at least 1, meaning that you can't have `0.x.y` releases.
 
-## Build IDs
+## Implementation
 
-In addition, each build is assigned a new build UUID to give further options for distinguishing releases. You can have multiple releases of the same version but different build UUIDs. For example, when dealing with Sentry or ProGuard mappings, having a unique UUID associated with the build makes your life easier. This property is tracked in **AppProperties** with *buildUuid* and the *newBuildSession* property to check if we are running a different build than last time. Keeping track of versions or build IDs is also important to be aware of when an update has been performed. Sometimes, it makes sense to clear data such as caches when the build ID changed.
+This scheme is implemented in the **AppVersion** class and allows for comparisons between versions. The versions are specified in the root **build.gradle** file in the configuration section. By default, it will use the version string from the **version** file in the root directory. You can however also use different ways to version your releases.
+
+If a release is not a full release, i.e. not a production build from the CI/CD pipeline, the version string will be appended with `-SNAPSHOT`. The **AppVersion** class will automatically remove this suffix when constructing a canonical version. This allows for proper comparisons between versions.
+
+## Unique versions
+
+Comparing versions is useful if you, for example, keep caches and want to clear those whenever the user runs an updated version of your application to prevent any kind of cache corruption.
+
+However, in practice, two different builds can have the same version if you didn't change it since the last time. For this reason, each build is assigned a new build UUID to give further options for distinguishing releases. You can have multiple releases of the same version but different build UUIDs. For example, when dealing with Sentry or ProGuard mappings, having a unique UUID associated with the build makes your life easier. This property is tracked in **AppProperties** with *buildUuid* and the *newBuildSession* property to check if we are running a different build than last time.

@@ -23,7 +23,7 @@ You don't need to install WiX as this can be done automatically nowadays with th
 
 ### Linux
 
-TBD
+Nothing
 
 ### macOS
 
@@ -45,5 +45,37 @@ is selected both for the project and for gradle itself.
 
 ## Basic customization
 
-Once the project is up and running in your IDE, the next step is to configure the base template for your own purposes. This includes stuff like renaming packages and other application names to your own names. It also includes a variety of different steps
+Once the project is up and running in your IDE, the next step is to configure the base template for your own purposes. This includes stuff like renaming packages and other application names to your own names.
+
+The first step is to go to the root *build.gradle* file and change all properties under the naming section to use your application name, package names, etc. These variables contain the naming scheme of your application in various different contexts and should be consistent:
+
+```groovy
+// Names of your app
+productName = 'Kickstart FX'
+kebapProductName = 'kickstart-fx'
+snakeProductName = 'kickstart_fx'
+// The names of your packages
+groupName = 'io.abc_def'
+artifactName = 'kickstart_fx'
+// The base name of the generated packages
+distName = "kickstartfx"
+```
+
+The next step is to also tell the application itself the same naming scheme in the *AppNames* class. There, you can configure the same information as in the build script.
+
+Finally, you can rename the packages itself in your IDE to match your specified group name and artifact name. Once this is done, the app should build with your naming configuration.
+
+## How to read the docs
+
+Once these steps are completed, you can now start looking through the documentation. Each page contains explanations, documentation, and more for certain features. Some of these might be relevant to your application, so you can just ignore those.
+
+To properly follow the docs, you will need your `Find file ...` functionality in your IDE on hand as throughout the documentation, file names will be shown in **bold**. For example, the class file **Main** will be referenced with the bold name, not the full package name or link, as that becomes quite convoluted.
+
+Variable names will be shown in *italic*, e.g. the variable *productName* in the root **build.gradle** file. For locating these individual variables within the file, just using the `Find ...` functionality should be enough.
+
+## Next steps
+
+Now, the next step is to look at the gradle build and how to properly run it. See the [build page](/build) page for that.
+
+
 

@@ -1,8 +1,33 @@
 ---
 title: Dependencies
-description: Parsing and handling arguments passed via the command-line
+description: Adding dependencies to the project
 ---
 
 ## About
 
-When starting to customize your application, it's all about adding custom dependencies that your code needs.
+When starting to customize your application, it's all about adding custom dependencies that your code needs. Due to the modern build workflow with jlink/jpackage, adding dependencies can become more work than usual if the library authors of that library still have not adapted their code to contain a module-info.
+
+KickstartFX is fully modular, and can therefore easily generate working runtime images. For these cases where you are using a library without module-info (an automatic module declaration does not count), KickstartFX comes with the tools to convert any non-modular dependencies into proper modules using the [extra-java-module-info](https://github.com/gradlex-org/extra-java-module-info) gradle plugin, without much hassle.
+
+If you have not used modules properly before, check out the [module system docs](https://openjdk.org/jeps/261) for it.
+
+## Creating modules
+
+The first step when adding a dependency is to quickly check the library artifact `.jar` whether it contains a module-info either in the root or, in case it is a [multi-release jar](https://openjdk.org/jeps/238), in the `META-INF/version/x`. If there is one, then you can just add the dependency as normal and don't have to worry about anything.
+
+If any of your dependencies (or transitive dependencies) are not properly modularized, the production build will fail. So you will be notified when modularization is needed.
+
+### Creating modules manually
+
+If your dependency does not contain a **module-info** file, you will have to use the gradle plugin to create one for you. This plugin is quite efficient at automatically doing this, e.g. it can automatically export and open all packages without having to specify the individual packages manually. When there are service providers or split packages involved, then the work becomes more tedious.
+
+To modularize a dependency, you first add it as a normal dependency as he would do for others. Then, you will have to provide a module definition in the **gradle/gradle_scripts/modules.gradle**. You can find various examples in the **modules.gradle** file on how it works. For the full documentation, see the [plugin docs](https://github.com/gradlex-org/extra-java-module-info?tab=readme-ov-file#defining-extra-module-information).
+
+### Split packages
+
+If the dependence has split packages, you will also have to merge the dependencies as shown in the plugin documentation. KickstartFX contains a good example of this with the flexmark dependency, which is not modularized and split across many modules. While it is certainly some work to modularize this dependency, the end result is a working markdown implementation solid distribution workflow with jpackage.
+
+### Transitive dependencies
+
+If your dependency has transitive dependencies, you will have to check for each one whether this one is modularized as well. If not, you will have to perform the same steps for the transitive dependency as well. This requires you to inspect the pom of your dependency, e.g. on https://central.sonatype.com/.
+

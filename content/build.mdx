@@ -5,17 +5,21 @@ description: Configuring and running the gradle build scripts
 
 ## About
 
-The build workflow is quite complex when you account for all necessary steps it takes to create a production application. There are multiple different build environments you can build kickstartfx in: Either a development environment or a proper production environment. Due to the complexities, the code for the distribution build workflow is a separate gradle project, the **dist** subproject.
+The build workflow is quite complex when you account for all necessary steps it takes to create a production application. There are multiple different build environments you can build kickstartfx in: Either a development environment or a proper production environment. Due to the complexities, the code for the distribution build workflow is a separate gradle project, the **dist** subproject directory.
 
 ## Gradle setup
 
 The main configuration of the build is done in the root **build.gradle**. There you can change all kinds of variables that are used throughout the build. This includes stuff like the name of your application and the generated artifacts, JVM arguments, JavaFX versions, and more.
 
-Note that if you use IntelliJ, preconfigured run configurations of the explained tasks are available in the **.run** directory in the project root.
-
 ## Gradle tasks
 
-The basic development build, which you most of the time run locally, will get you a basic running application. You are, however, missing stuff like codesigning, AOT training caches, and proper versioning. You can run the application in local development mode with `gradlew app:run`.
+Note that if you use IntelliJ, preconfigured run configurations of the explained tasks are available in the **.run** directory in the project root.
+
+### Development build
+
+The basic development build, which you most of the time run locally, will get you a basic running application. You are, however, missing stuff like codesigning, AOT training caches, and proper versioning. You can run the application in local development mode with `gradlew run`.
+
+### Production build
 
 To generate a runtime image that can be used for production, you can run `gradlew clean dist`. The clean is recommended as some parts of the dist workflow, like external tools, might not work very well in an incremental fashion. To rule out any of these issues, cleaning the project before running the distribution workflow is the safest option.
 
@@ -23,9 +27,15 @@ The `dist` task generates artifacts in `dist/build/dist/artifacts`. These can be
 
 When configured and enabled, the production build workflow can include all steps like signing the code, training AOT data, and more. To properly run this build, you will need to have all additional required tools installed for installer generation, signing, and more. For instructions on how to configure the environment to enable signing, see the [Windows](windows-signing) and [macOS](/notarization) pages. Some steps like training the [AOT cache](/aot) are only done on the GitHub runners by default, but can be enabled by changing the variable *enableAot* in the root **build.gradle**.
 
-The repository includes a GitHub actions workflow that will run the production build automatically without any user input. This workflow is run on all available operating systems and architectures you choose, and the generated artifacts are grouped together in a GitHub release.
+## Building in CI/CD
 
-## Formatting
+The repository includes a GitHub actions workflow that will run the production build automatically without any user input. This workflow is run on all available operating systems and architectures you choose, and the generated artifacts are grouped together in a GitHub release. You can find these workflows in **.github/workflows**.
 
-To maintain a consistent code style, also across different IDEs, the project uses the spotless gradle plugin. You can run this task to automatically format your entire codebase into a standard format. You can adjust the code style settings for spotless in the root **build.gradle** file.
+The publishing workflow will trigger if your commit message contains the literal `[release]`. This allows you to flexibly control when to trigger the release pipeline when pushing changes. The publishing workflow will automatically create a new GitHub release with all the built artifacts attached. It will also format a changelog from the file **dist/changelog/\<version\>** and the template **dist/changelog_format/github.md**. You can freely customize the template and create a changelog file for each new release.
+
+By default, the GitHub runners for this workflow are the public GitHub hosted runners, which are available for free if you are developing in a public repository. To run the workflow on additional runners, e.g. Windows ARM and Linux ARM platforms, you can modify the **windows_build.yml** and **linux_build.yml** file and specifiy the names of your custom runners you created. As these platforms are not publicly available in the hosted runners, you will have to pay for using them. For more information, see the GitHub docs. Note that in case you do this, Windows ARM builds will use the Liberica JDK as it is the only solution for JavaFX builds for Windows ARM.
+
+## Formatting tasks
+
+To maintain a consistent code style, also across different IDEs, the project uses the spotless gradle plugin. You can run this task to automatically format your entire codebase into a standard format. You can adjust the code style settings for spotless in the root **build.gradle** file. Then you can run `gradlew spotlessApply` to perform the format operation for the whole codebase.
 

@@ -1,0 +1,20 @@
+---
+title: Dialogs
+description: Using modal overlays as dialogs
+---
+
+## About
+
+When showing any kind of popup, the usual process in JavaFX is showing an Alert. However, after a lot of experience in the early phases of XPipe, it was decided that the AtlantaFX ModalPane is better suited for popups than Alerts. The ModalPane has several advantages and follows the more common design that you find in modern applications nowadays where separate popup windows aren't used that much.
+
+## Showing dialogs
+
+You can build a dialog with the `ModalOverlay` class. There you can configure the title, content, buttons, and more. The usual stuff you would also add to an alert. The ModalOverlay can then be shown either with the non-blocking `show` method or the blocking `showAndWait` method.
+
+A ModalOverlay does not evaluate to a result like an Alert, instead you can just configure custom Runnables for each ModalButton you added that should be executed when the button is pressed.
+
+ModalOverlays can also be stacked. When showing a ModalOverlay while another one is already shown, it will show it on top of the stack.
+
+## Showing alerts
+
+In case you still want to use alerts, you can do so as normal. As a helper function, you can use `AppSideWindow.showBlockingAlert()` to show an alert and get the button result if possible.
