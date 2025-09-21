@@ -43,11 +43,19 @@ The tested and recommended IDE is IntelliJ.
 When setting up the project in IntelliJ, make sure that the correct JDK (Java 25)
 is selected both for the project and for gradle itself.
 
-## Basic customization
+## How to read the docs
+
+Once these steps are completed, you can now start looking through the documentation. Each page contains explanations, documentation, and more for certain features. Some of these might be relevant to your application, so you can just ignore those.
+
+To properly follow the docs, you will need your `Find file ...` functionality in your IDE on hand as throughout the documentation, file names will be shown in **bold**. For example, the class file **Main** will be referenced with the bold name, not the full package name or link, as that becomes quite convoluted.
+
+Variable names will be shown in *italic*, e.g. the variable *productName* in the root **build.gradle** file. For locating these individual variables within the file, just using the `Find ...` functionality should be enough.
+
+## Name customization
 
 Once the project is up and running in your IDE, the next step is to configure the base template for your own purposes. This includes stuff like renaming packages and other application names to your own names.
 
-The first step is to go to the root *build.gradle* file and change all properties under the naming section to use your application name, package names, etc. These variables contain the naming scheme of your application in various different contexts and should be consistent:
+The first step is to go to the root **build.gradle** file and change all properties under the naming section to use your application name, package names, etc. These variables contain the naming scheme of your application in various different contexts and should be consistent:
 
 ```groovy
 // Names of your app
@@ -61,17 +69,13 @@ artifactName = 'kickstart_fx'
 distName = "kickstartfx"
 ```
 
-The next step is to also tell the application itself the same naming scheme in the *AppNames* class. There, you can configure the same information as in the build script.
+The next step is to also tell the application itself the same naming scheme in the **AppNames** class. There, you can configure the same information as in the build script.
 
 Finally, you can rename the packages itself in your IDE to match your specified group name and artifact name. Once this is done, the app should build with your naming configuration.
 
-## How to read the docs
+## Other basic information
 
-Once these steps are completed, you can now start looking through the documentation. Each page contains explanations, documentation, and more for certain features. Some of these might be relevant to your application, so you can just ignore those.
-
-To properly follow the docs, you will need your `Find file ...` functionality in your IDE on hand as throughout the documentation, file names will be shown in **bold**. For example, the class file **Main** will be referenced with the bold name, not the full package name or link, as that becomes quite convoluted.
-
-Variable names will be shown in *italic*, e.g. the variable *productName* in the root **build.gradle** file. For locating these individual variables within the file, just using the `Find ...` functionality should be enough.
+The next step would be to use the `Find in files ...` functionality in your IDE and search for `TODO`. All additional items that require changing like the vendor name for your application installer, the links to your project page, and more are marked with a `TODO` comment. Note that you should not use the integrated ability of your IDE to look for TODO entries as some TODO entries are also placed in non-Java files. IDEs usually skip those, so it's best to just use the `Find in files ...` functionality.
 
 ## Next steps
 
