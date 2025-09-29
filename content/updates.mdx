@@ -1,0 +1,35 @@
+---
+title: Updates
+description: Checking for updates and installing them
+---
+
+## About
+
+Today, installing regular updates for your application is important for an efficient distribution workflow. Without this, users get stuck on old versions and won't have access to all the new features of more recent versions, because in practice, most people don't update manually.
+
+## Update check
+
+KickstartFX comes with an integrated update check for GitHub repositories. The **UpdateHandler** class is the base class for this and the **BasicUpdater** is a simple implementation of it.
+
+The **UpdateHandler** will start a thread that automatically checks for updates in the GitHub releases of the associated repository every hour, assuming that this is enabled in the settings. You can change the repository URL in the **AppReleases** class. Once it detects an update, it will show a dialog with the changelog and buttons to check out the update. The changelog is rendered markdown, so you will be able to utilize all markdown features in your changelogs and they will display properly.
+
+## Distribution types
+
+To keep track of which kind of distribution your application is, e.g. is it an installer, a portable archive, a package manager installation, etc., KickstartFX keep struck of this in the **AppDistributionType** class. You can dynamically extend this class with your own distribution types. Every distribution type usually has the own method of checking and performing updates, so every distribution type you add should provide a different update handler implementation.
+
+For inspiration on how different distribution types might be implemented, see https://github.com/xpipe-io/xpipe/blob/master/app/src/main/java/io/xpipe/app/update/AppDistributionType.java.
+
+## Installing updates
+
+The topic of actually installing updates is not fully covered by KickstartFX, mainly because this is a very individualistic process between different applications. Some focus on installers, some on portables, some on package managers, etc. There isn't one right way to install updates.
+
+To start out with it, the **BasicUpdater** contains a simple implementation to install the .msi installer on Windows automatically through a button. This is possible because msis can be handled uniformly. On other operating systems like Linux and macOS, it isn't that easy as you need root and there isn't a single right application / package manager to install a package.
+
+## Installers for updates
+
+All generated installer packages, the .msi, .deb, .rpm, and .pkg, are built with updates in mind. This means that you can install them on a system where an older version of your application is already installed, and they will automatically perform the upgrade. They will ensure that the old version is stopped/killed and removed, and the new version will be installed on top of it.
+
+The installers will try to shut down the application orderly first if it is running and kill it if that is not possible.
+
+Most software for installers, e.g. msiexec, can handle incremental updates, meaning that it should only effectively replace files that were changed. Unless you changed your JDK version, it won't have to copy all the JDK runtime files for each update.
+
