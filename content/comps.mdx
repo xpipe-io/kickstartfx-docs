@@ -1,35 +1,106 @@
 ---
 title: GUI components
-description: The how and why of Comps
+description: The how and why of compound components
 ---
 
 ## About
 
+While KickstartFX obviously uses JavaFX for the use your interface, there are still a lot of possibilities on how exactly any kind of node/control should be instantiated and handled in the codebase.
+
+KickstartFX creates and manages these JavaFX nodes via comps (compound components). Essentially, a **Comp** is just a factory/supplier of Region instances. So when creating a comp, you are only configuring the factory for a Region. To actually create the JavaFX nodes, you will have to call the creator method.
+
+Comps are a very basic system to create components for your user interface. If you don't like it are you something else, you can do so without problem. It's just that the existing pages like the preferences page uses them. Unless you want to heavily modify this page, there isn't any issue here.
+
+## Principles
+
+Comps are based on a few principles that were discovered to be useful when developing, compared to just creating and using raw JavaFX nodes. You can see these principles in action with the few included Comp implementations in the **comp** package.
+
+#### A comp should produce a Region instead of a Node
+
+In practice, working with the very abstract Node class comes with its fair share of limitations.
+It is much easier to work with Region instances, as they have various width and height properties.
+Since pretty much every Node is also a Region, the main focus of Comps are Regions.
+In case you are dealing with Nodes that are not Regions, like an ImageView or WebView,
+you can still wrap them inside something like a StackPane to obtain a Region that you can work with.
+
+#### A comp is a Region factory, not just another fancy wrapper for existing classes
+
+It is advantageous to define a certain component to be a factory
+that can create an instance of a JavaFX Node each time it is called.
+
+This essentially lazy initialization of your user inferface will prevent any kind of unintentional platform loading. The first call to any Node class, e.g. `new Node()` will trigger the loading of all JavaFX native libraries and toolkit dependencies. If you are building an application like KickstartFX that has strictly defined loading processes, it can happen that the platform is loaded accidentally when it shouldn't be loaded yet. With Comps, you can define all of your user interface layout, while not accidentally initializing the platform as this will only be done when you call the creator method.
+
+By using this factory architecture, the creation process can be customized for each instance. The **Comp** class provides various methods to quickly perform the customizations. E.g. the **Comp** class contains method like *prefWidth* or *maxHeight* to quickly chain together common method calls for sizing. There is also support for controlling the visibility, setting tooptips, and more.
+
+#### A comp should produce a transparent representation of all nodes that make up the control
+
+In JavaFX, using skins allows for flexibility when generating the look and feel for a control.
+One limitation of this approach is that the generated node tree is not very transparent
+for developers who are especially interested in styling it.
+This is caused by the fact that a skin does not expose the information required to style
+it completely or even alter it without creating a new Skin class.
+
+A comp should be designed to allow developers to easily expose as much information
+about the produced node tree structure using the **CompStructure** class.
+
+In case you don't want to expose the detailed structure of your comp,
+you can also just use a **SimpleComp** or return a **SimpleCompStructure**.
+
+#### The generation process of a comp can be augmented
+
+As Comps are factories, any changes that should be applied to all produced
+Region instances must be integrated into the factory pipeline.
+
+This can be achieved with the **Augment** class, which allows you
+to alter the produced Region after the base factory has finished.
+
+This way you can reuse common augments between Comps to not duplicate code. It also makes your factories more flexible as augmentations can be handled via Augments and not via the Comp itself.
+
+#### Properties used by Comps should be managed by the user, not the Comp itself
+
+This allows Comps to only be a thin wrapper around already existing
+Observables/Properties and gives the user the ability to complete control the handling of Properties.
+
+This is in contrast to JavaFX controls which instantiate their own properties. As a result, you always have to create bindings to the properties of controls. With Comps, you instantiate your own property instance and pass it to the Comp instead. This gives you more freedom when handling any kind of Properties. Also see the next point.
+
+#### A comp should not break when used Observables are updated from a thread that is not the platform thread
+
+One common limitation of using JavaFX is that many things break when
+calling any method or changing a property from another thread that is not the platform thread.
+
+While in many cases these issues can be mitigated by wrapping a problematic call in a Platform.runLater(...),
+some problematic instances are harder to fix, for example, Observable bindings.
+In JavaFX, there is currently no way to propagate changes of an Observable
+to other bound Observables only using the platform thread, when the original change was made from a different thread.
+
+KickstartFX provides a solution with the *PlatformThread.sync()* and *PlatformThread.runLaterIfNeeded()* methods and strongly encourages that
+Comps make use of these methods in combination with user-managed properties
+to allow for value changes for Observables from any thread without issue.
+
+If you create a Comp with some kind of Property, you can freely modify it from any thread without any issue. The Comp will see that the change is propagated to the platform on the correct thread without you having to worry about it.
+
+## Not using comps
+
+If you don't want to use Comps at all, but some methods of KickstartFX still take Comps as a parameter, you can create Comps inline as follows:
+
+```java
+var comp = Comp.of(() -> new Label());
+var region = comp.createRegion();
+```
+
+You can also use Comps in a minimal fashion by just extending the **SimpleComp** class:
 
 
-## Update check
+```java
+public class MyComp extends SimpleComp {
 
-KickstartFX comes with an integrated update check for GitHub repositories. The **UpdateHandler** class is the base class for this and the **BasicUpdater** is a simple implementation of it.
+    @Override
+    protected Region createSimple() {
+        var stack = new StackPane();
+        // ... Do your stuff
+        return stack;
+    }
+}
+```
 
-The **UpdateHandler** will start a thread that automatically checks for updates in the GitHub releases of the associated repository every hour, assuming that this is enabled in the settings. You can change the repository URL in the **AppReleases** class. Once it detects an update, it will show a dialog with the changelog and buttons to check out the update. The changelog is rendered markdown, so you will be able to utilize all markdown features in your changelogs and they will display properly.
-
-## Distribution types
-
-To keep track of which kind of distribution your application is, e.g. is it an installer, a portable archive, a package manager installation, etc., KickstartFX keep struck of this in the **AppDistributionType** class. You can dynamically extend this class with your own distribution types. Every distribution type usually has the own method of checking and performing updates, so every distribution type you add should provide a different update handler implementation.
-
-For inspiration on how different distribution types might be implemented, see https://github.com/xpipe-io/xpipe/blob/master/app/src/main/java/io/xpipe/app/update/AppDistributionType.java.
-
-## Installing updates
-
-The topic of actually installing updates is not fully covered by KickstartFX, mainly because this is a very individualistic process between different applications. Some focus on installers, some on portables, some on package managers, etc. There isn't one right way to install updates.
-
-To start out with it, the **BasicUpdater** contains a simple implementation to install the .msi installer on Windows automatically through a button. This is possible because msis can be handled uniformly. On other operating systems like Linux and macOS, it isn't that easy as you need root and there isn't a single right application / package manager to install a package.
-
-## Installers for updates
-
-All generated installer packages, the .msi, .deb, .rpm, and .pkg, are built with updates in mind. This means that you can install them on a system where an older version of your application is already installed, and they will automatically perform the upgrade. They will ensure that the old version is stopped/killed and removed, and the new version will be installed on top of it.
-
-The installers will try to shut down the application orderly first if it is running and kill it if that is not possible.
-
-Most software for installers, e.g. msiexec, can handle incremental updates, meaning that it should only effectively replace files that were changed. Unless you changed your JDK version, it won't have to copy all the JDK runtime files for each update.
 
