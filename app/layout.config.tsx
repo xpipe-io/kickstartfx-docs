@@ -26,5 +26,5 @@ export const baseOptions: BaseLayoutProps = {
       ),
     enabled: true
   },
-  githubUrl: 'https://github.com/xpipe-io/kickstartfx',
+  githubUrl: 'https://github.com/xpipe-io/kickstartfx-docs',
 };
