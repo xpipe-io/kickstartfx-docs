@@ -1,0 +1,41 @@
+---
+title: Translations
+description: Internationalizing your application
+---
+
+## About
+
+For proper internationalization, your app needs to support a variety of different languages. KickstartFX comes preconfigured with multi-language support where users can switch the entire application language with one click. The built-in strings are also translated into various languages already, meaning that you don't have to start from zero.
+
+This page explains how to use the I18n tools with KickstartFX.
+
+## Format
+
+Translation strings are configured via .properties files in a resource bundle. You can find them in the **lang** directory in the project root. Individual strings are found in the **strings** directory while markdown texts are found in the **texts** directory.
+
+Note that all files should be encoded in UTF-8. Since the historic default for properties files was `ISO-8859-1`, you have to make sure that your IDE is correctly configured. Even IntelliJ still defaults to the old encoding, and you have to overwrite it explicitly for properties files:
+
+![](/images/encoding.png)
+
+## Using translated strings
+
+The **AppI18n** class contains the code for handling translated strings. You can obtain the text in the currently active language with `AppI18n.get("<string>")`.
+
+However, since you probably want to create a UI that reacts instantly to language changes, it is recommended to use `AppI18n.observable("<string>")`. This method returns an `ObservableValue<String>`, which will register updates when the application language changes. If you bind this observable value to a string property, like the `textProperty()` of a Label, the UI will update as soon as the language is changed. Updates to the ObservableValue are guaranteed to come from the platform thread, so you don't have to worry about any threading issues.
+
+To pass arguments to the translated string, you can just pass them as varargs in the `get()` and `observable()` methods. For example, the string `testString=Value 1: $VAL1$, Value 2: $VALUE2$` can be formatted with `AppI18n.get("testString", "first value", "second value")`.
+
+## Using translated texts
+
+In case you need more than just strings, e.g. fully-fledged Markdown documents, you can use the text translation.
+
+## Creating translations
+
+Nowadays, with the advent of AI and language models, it is not really necessary anymore to make the task of translation creation a big community effort. Instead, you can feed your existing translations, usually starting from english, into a tool like DeepL to automatically create them for you. These won't be perfect, but will automate the bulk of the work that goes into creating translations. Community members who are interested in translating your project into their language then only have to perform minor fixes.
+
+For inspiration on how to accomplish this, take a look at this foojay article: https://foojay.io/today/localize-apps-with-ai/
+
+## Adding new languages
+
+To add translations for a new language, first create the translations properties file with the id of the locale. Then, in the **SupportedLocale** class, you can add a new entry for your Locale. This will automatically get picked up by the settings menu when showing all available languages.
+

@@ -20,6 +20,7 @@
     "arguments",
     "operation-mode",
     "comps",
+    "translations",
     "updates",
     "shutdown",
     "restart",
