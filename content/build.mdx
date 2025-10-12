@@ -11,13 +11,15 @@ The build workflow is quite complex when you account for all necessary steps it 
 
 The main configuration of the build is done in the root **build.gradle**. There you can change all kinds of variables that are used throughout the build. This includes stuff like the name of your application and the generated artifacts, JVM arguments, JavaFX versions, and more.
 
-## Gradle tasks
+Note that if you use IntelliJ, preconfigured run configurations of the explained tasks on this page are available in the **.run** directory in the project root.
 
-Note that if you use IntelliJ, preconfigured run configurations of the explained tasks are available in the **.run** directory in the project root.
+## Building locally
 
 ### Development build
 
-The basic development build, which you most of the time run locally, will get you a basic running application. You are, however, missing stuff like codesigning, AOT training caches, and proper versioning. You can run the application in local development mode with `gradlew run`.
+The basic development build, which you most of the time run locally in your IDE, will get you a basic running application. You are, however, missing stuff like codesigning, AOT training caches, and proper versioning. You can run the application in local development mode with `gradlew run`.
+
+To customize the application behavior during local development, the build script will automatically generate the file **app/dev.properties**. This file is designated to pass custom properties to your application in development mode. This way you can adjust the application behavior when being run while developing versus actual releases.
 
 ### Production build
 
@@ -25,7 +27,31 @@ To generate a runtime image that can be used for production, you can run `gradle
 
 The `dist` task generates artifacts in `dist/build/dist/artifacts`. These can be used in a production environment. To quickly reinstall your built application on the system, there exists the utility task `distAndInstall`. Running `gradlew clean distAndInstall` will create the production dist and automatically run the generated installer to upgrade the installed application on your system.
 
-When configured and enabled, the production build workflow can include all steps like signing the code, training AOT data, and more. To properly run this build, you will need to have all additional required tools installed for installer generation, signing, and more. For instructions on how to configure the environment to enable signing, see the [Windows](windows-signing) and [macOS](/notarization) pages. Some steps like training the [AOT cache](/aot) are only done on the GitHub runners by default, but can be enabled by changing the variable *enableAot* in the root **build.gradle**.
+#### Signing
+
+When configured and enabled, the production build workflow can include all steps like signing the code, training AOT data, and more. To properly run this build, you will need to have all additional required tools installed for installer generation, signing, and more. For instructions on how to configure the environment to enable signing, see the [Windows](windows-signing) and [macOS](/notarization) pages.
+
+#### AOT cache
+
+Steps like training the [AOT cache](/aot) are only done in the CI/CD pipeline by default, but can be enabled by changing the variable *enableAot* in the root **build.gradle**.
+
+#### Debugging
+
+The generated production applications can be debugged via the automatically generated debug scripts. You can find them in the **scripts** directory of the generated application images. The debug scripts launch the JVM with verbose logging options and other properties. You can customize which properties are passed and how the scripts look like in the **dist/debug** directory.
+
+To automatically attach the debugger on production app startup where the app will wait idle until it is attached, it is recommended to use [AttachMe](https://github.com/JetBrains/attachme) in IntelliJ. Then, passing these additional JVM options in the debug script will make your app automatically attach:
+
+```
+-javaagent:<home dir>/.attachme/attachme-agent-1.2.11.jar=port:7857,host:localhost
+-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=127.0.0.1:0
+-XX:+EnableDynamicAgentLoading
+```
+
+If you don't want to use AttachMe, you can also just use the agentlib option alone. If you do that, you will have to attach you debugger manually each time though.
+
+### Formatting
+
+To maintain a consistent code style, also across different IDEs, the project uses the spotless gradle plugin. You can run this task to automatically format your entire codebase into a standard format. You can adjust the code style settings for spotless in the root **build.gradle** file. Then you can run `gradlew spotlessApply` to perform the format operation for the whole codebase.
 
 ## Building in CI/CD
 
@@ -37,7 +63,4 @@ For the GitHub release to be created, you need to specify the environment variab
 
 By default, the GitHub runners for this workflow are the public GitHub hosted runners, which are available for free if you are developing in a public repository. To run the workflow on additional runners, e.g. Windows ARM and Linux ARM platforms, you can modify the **windows_build.yml** and **linux_build.yml** file and specifiy the names of your custom runners you created. As these platforms are not publicly available in the hosted runners, you will have to pay for using them. For more information, see the GitHub docs. Note that in case you do this, Windows ARM builds will use the Liberica JDK as it is the only solution for JavaFX builds for Windows ARM.
 
-## Formatting tasks
-
-To maintain a consistent code style, also across different IDEs, the project uses the spotless gradle plugin. You can run this task to automatically format your entire codebase into a standard format. You can adjust the code style settings for spotless in the root **build.gradle** file. Then you can run `gradlew spotlessApply` to perform the format operation for the whole codebase.
 
