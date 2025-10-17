@@ -5,11 +5,11 @@ description: The how and why of compound components
 
 ## About
 
-While KickstartFX obviously uses JavaFX for the use your interface, there are still a lot of possibilities on how exactly any kind of node/control should be instantiated and handled in the codebase.
+While KickstartFX obviously uses JavaFX for the user interface, there are still a lot of possibilities on how exactly any kind of node/control should be instantiated and handled in the codebase.
 
 KickstartFX creates and manages these JavaFX nodes via comps (compound components). Essentially, a **Comp** is just a factory/supplier of Region instances. So when creating a comp, you are only configuring the factory for a Region. To actually create the JavaFX nodes, you will have to call the creator method.
 
-Comps are a very basic system to create components for your user interface. If you don't like it are you something else, you can do so without problem. It's just that the existing pages like the preferences page uses them. Unless you want to heavily modify this page, there isn't any issue here.
+Comps are a very basic system to create components for your user interface. If you don't like it or using something else, you can do so without problem. It's just that the existing pages like the preferences page uses them. Unless you want to heavily modify this page, there isn't any issue here.
 
 ## Principles
 
@@ -51,7 +51,7 @@ you can also just use a **SimpleComp** or return a **SimpleCompStructure**.
 As Comps are factories, any changes that should be applied to all produced
 Region instances must be integrated into the factory pipeline.
 
-This can be achieved with the **Augment** class, which allows you
+This can be achieved with the **CompAugment** class, which allows you
 to alter the produced Region after the base factory has finished.
 
 This way you can reuse common augments between Comps to not duplicate code. It also makes your factories more flexible as augmentations can be handled via Augments and not via the Comp itself.
