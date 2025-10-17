@@ -13,22 +13,22 @@ In practice, this is done via IPC (inter process communication) solutions where 
 
 ## Implementation
 
-KickstartFX implements this using named pipes on Windows and sockets on Unix-based systems. You can find the implementation in the *AppNamedPipeBeacon* and *AppUnixSocketBeacon*. It is called a beacon as the file location for the pipe/socket is always the same and is available to all other applications, as a sort of beacon.
+KickstartFX implements this using named pipes on Windows and sockets on Unix-based systems. You can find the implementation in the **AppNamedPipeBeacon** and **AppUnixSocketBeacon**. It is called a beacon as the file location for the pipe/socket is always the same and is available to all other applications, as a sort of beacon.
 
 Note that if you don't need instance management, you can just remove all the logic associated with the beacon code. Some kinds of applications don't need to communicate with each other, but most do if they want to offer a good user experience.
 
 You can find the named pipe at `\\.\pipe\kickstartfx` and the socket at `/tmp/kickstartfx.sock`. This uses the kebap name of the application name.
 
-When the first application instance starts up, it will create the pipe/socket and listen to any messages. If that file already exists, this is interpreted as another instance already running, and the application will community the startup message to this instance and quit.
+When the first application instance starts up, it will create the pipe/socket and listen to any messages. If that file already exists, this is interpreted as another instance already running, and the application will communicate the startup message to this instance and quit.
 
-Messages are formatted using json via Jackson. You can find the message class at *AppBeaconMessage*. This class keeps track of all possible message subclasses, which you can dynamically extend. Any message can also contain parameters, which are then serialized with the message.
+Messages are formatted using json via Jackson. You can find the message class at **AppBeaconMessage**. This class keeps track of all possible message subclasses, which you can dynamically extend. Any message can also contain parameters, which are then serialized with the message.
 
 ## Messages
 
 Right now, there are 3 supported message types:
 
-- *FocusRequest*: Used by a secondary instance to signal that the application has been launched again. Ideally this should focus/show the main window of your primary application, as this is what the user typically expects. If your application is running in background/tray mode, then this is necessary to get out of this mode again.
+- **FocusRequest**: Used by a secondary instance to signal that the application has been launched again. Ideally this should focus/show the main window of your primary application, as this is what the user typically expects. If your application is running in background/tray mode, then this is necessary to get out of this mode again.
 
-- *ExitRequest*: Signals that the primary application should exit. This is only used internally, but can also be used by you to explicitly close another running primary application.
+- **ExitRequest**: Signals that the primary application should exit. This is only used internally, but can also be used by you to explicitly close another running primary application.
 
-- *OpenRequest*: Signals that the user passed arguments, e.g. file paths, to the secondary instance which should be opened in the primary one. This way, you can implement proper argument handling and file explorer integrations. On macOS, due to how macOS handles URLs, this is necessary to pass URL parameters to an application.
+- **OpenRequest**: Signals that the user passed arguments, e.g. file paths, to the secondary instance which should be opened in the primary one. This way, you can implement proper argument handling and file explorer integrations. On macOS, due to how macOS handles URLs, this is necessary to pass URL parameters to an application.
