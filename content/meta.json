@@ -12,6 +12,7 @@
     "dependencies",
     "windows-signing",
     "notarization",
+    "gpg",
     "---Reference---",
     "checks",
     "themes",
